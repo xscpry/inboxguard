@@ -3,7 +3,7 @@
   session_start();
 
   if(isset($_SESSION['user']) && $_SESSION['user'] == 'user'){
-    header('location: ./index.php');
+    header('location: ../index.php');
   }
 
   require_once '../classes/user.class.php';
@@ -14,11 +14,7 @@
     //sanitize
     $user->firstname = htmlentities($_POST['firstname']);
     $user->lastname = htmlentities($_POST['lastname']);
-    if(isset($_POST['signup'])){
-      $user->gender = htmlentities($_POST['gender']);
-    }else{
-        $user->gender = '';
-    }
+    $user->gender = isset($_POST['gender']) ? htmlentities($_POST['gender']) : '';
     $user->email = htmlentities($_POST['email']);
     $user->password = htmlentities($_POST['password']);
 
@@ -30,7 +26,7 @@
     validate_cpw($user->password, $_POST['confirmpassword'])){
         //proceed with saving
         if($user->add()){ 
-          echo "<script>alert('You successfully created an account!');window.location.href='./index.php'</script>";
+          echo "<script>alert('You successfully created an account!');window.location.href='../index.php'</script>";
         }else{
           echo 'An error occured while adding in the database.';
         }
