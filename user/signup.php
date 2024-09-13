@@ -3,7 +3,7 @@
   session_start();
 
   if(isset($_SESSION['user']) && $_SESSION['user'] == 'user'){
-      header('location: ./index.php');
+    header('location: ./index.php');
   }
 
   require_once '../classes/user.class.php';
@@ -30,7 +30,7 @@
     validate_cpw($user->password, $_POST['confirmpassword'])){
         //proceed with saving
         if($user->add()){ 
-          echo "<script>alert('You successfully created an account!');window.location.href='pet-signup.php'</script>";
+          echo "<script>alert('You successfully created an account!');window.location.href='./index.php'</script>";
         }else{
           echo 'An error occured while adding in the database.';
         }
@@ -54,7 +54,7 @@
         <div class="container mt-5">
             <h1>Create an account</h1>
             <p>Please enter your details to sign up and be protected from malicious email-based attacks.</p>
-            <form  action="" method="POST" class="signup-user my-4">
+            <form  action="" method="POST" name="signup" class="signup-user my-4">
                 <div class="form-group row flex-nowrap my-3">
                     <div class="col-sm-6 align-self-center">
                         <label for="firstname">First Name</label>
@@ -150,7 +150,7 @@
                         ?>
                     </div>
                     
-                    <button type="submit" class="login-btn btn mt-4">Sign Up</button>
+                    <button type="submit" name="signup" class="login-btn btn mt-4">Sign Up</button>
 
                     <?php
                         if(isset($_POST['signup']) && isset($error)){

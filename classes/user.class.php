@@ -23,7 +23,7 @@ Class User{
 
     function add(){
         $sql = "INSERT INTO user (firstname, lastname, gender, email, password) VALUES 
-        (:firstname, :lastname, :gender, :email, :password, :phoneno);";
+        (:firstname, :lastname, :gender, :email, :password);";
 
         $query=$this->db->connect()->prepare($sql);
         $query->bindParam(':firstname', $this->firstname);

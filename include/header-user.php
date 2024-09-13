@@ -16,6 +16,9 @@
             <li class="nav-item mx-3">
               <a class="nav-link <?= $loginpage ?>" aria-current="page" href="../user/login.php">Log In</a>
             </li>
+            <li class="nav-item mx-3">
+              <a class="nav-link <?= $signuppage ?>" aria-current="page" href="../user/signup.php">Sign Up</a>
+            </li>
           </ul>
         </div>
       </div>
