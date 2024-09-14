@@ -8,6 +8,10 @@
 
   require_once '../classes/user.class.php';
   require_once '../tools/functions.php';
+  
+  use PHPMailer\PHPMailer\PHPMailer;
+  use PHPMailer\PHPMailer\Exception;
+  require '../vendor/autoload.php';
 
   if(isset($_POST['signup'])){
     $user = new User();
@@ -26,13 +30,40 @@
     validate_cpw($user->password, $_POST['confirmpassword'])){
         //proceed with saving
         if($user->add()){ 
-          echo "<script>alert('You successfully created an account!');window.location.href='../index.php'</script>";
+            echo "<script>alert('You successfully created an account!');window.location.href='../index.php'</script>";
+            
+            // Send verification email
+            $mail = new PHPMailer(true);
+
+            require_once './verify.php';
+
+            try {
+                $mail->isSMTP();
+                $mail->Host = 'smtp.gmail.com';
+                $mail->SMTPAuth = true;
+                $mail->Username = 'tierneysewali@gmail.com';
+                $mail->Password = 'bczo oxic whao dmdw';
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Port = 587;
+
+                $mail->setFrom('tierneysewali@gmail.com', 'InboxGuard');
+                $mail->addAddress($user->email);
+
+                $mail->isHTML(true); 
+                $mail->Subject = 'Verify your email address';
+                $mail->Body = 'Please click the link below to verify your email:<br><a href="http://localhost/verify.php?token=' . $user->verification_token . '">Verify Email</a>';
+                $mail->AltBody = 'Please click the link below to verify your email: http://localhost/verify.php?token=' . $user->verification_token;
+                    
+                $mail->send();
+                echo 'Verification email has been sent.';
+            } catch (Exception $e) {
+                echo "Email could not be sent. Mailer Error: {$mail->ErrorInfo}";
+            }
         }else{
           echo 'An error occured while adding in the database.';
         }
     }
   }
-
 ?>
 
 <!DOCTYPE html>

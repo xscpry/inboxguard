@@ -11,6 +11,7 @@ Class User{
     public $gender;
     public $email;
     public $password;
+    public $verification_token;
 
     protected $db;
 
@@ -22,8 +23,8 @@ Class User{
     //Methods
 
     function add(){
-        $sql = "INSERT INTO user (firstname, lastname, gender, email, password) VALUES 
-        (:firstname, :lastname, :gender, :email, :password);";
+        $sql = "INSERT INTO user (firstname, lastname, gender, email, password, verification_token, is_verified)
+        VALUES (:firstname, :lastname, :gender, :email, :password, :token, 0)";
 
         $query=$this->db->connect()->prepare($sql);
         $query->bindParam(':firstname', $this->firstname);
@@ -33,13 +34,34 @@ Class User{
         // Hash the password securely using password_hash
         $hashedPassword = password_hash($this->password, PASSWORD_DEFAULT);
         $query->bindParam(':password', $hashedPassword);
-        
+        // For email verification
+        $query->bindParam(':token', $this->verification_token);
+
         if($query->execute()){
             return true;
         }
         else{
             return false;
         }	
+    }
+
+    function verifyToken($token){
+        $sql = "SELECT * FROM users WHERE verification_token = :token AND is_verified = 0";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':token', $token);
+
+        if ($query->execute()) {
+            $user = $query->fetch();
+            if ($user) {
+                // Update the user to set is_verified to 1
+                $updateSql = "UPDATE user SET is_verified = 1, verification_token = NULL WHERE user_id = :user_id";
+                $updateQuery = $this->db->connect()->prepare($updateSql);
+                $updateQuery->bindParam(':user_id', $user['user_id']);
+                return $updateQuery->execute();
+            }
+        }
+        return false;
     }
 
     function edit(){
